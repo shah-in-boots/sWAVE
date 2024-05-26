@@ -1,0 +1,30 @@
+Package: sWAVE
+Title: Shiny Waveform Annotation, Visualization, and Editor
+Version: 0.0.0.9000
+Authors@R: 
+    person("Anish S.", "Shah", , "ashah282@uic.edu", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-9729-1558"))
+Description: Create and interact with intracardiac electrophysiology signal 
+    data using a `shiny` app interface. The application allows for annotations 
+    and extends the capacities of the `EGM` package. 
+License: GPL (>= 3)
+Depends: 
+    R (>= 4.1.0),
+    shiny (>= 1.8.1.1),
+    EGM (>= 0.1.0),
+Imports: 
+    golem (>= 0.4.1),
+    attempt,
+    config (>= 0.3.2),
+    DT,
+    glue,
+    htmltools,
+Suggests: 
+    shinipsum,
+    spelling,
+    testthat (>= 3.0.0)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Config/testthat/edition: 3
+Language: en-US

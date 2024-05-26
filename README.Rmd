@@ -1,0 +1,61 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# sWAVE
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/sWAVE)](https://CRAN.R-project.org/package=sWAVE)
+[![R-CMD-check](https://github.com/shah-in-boots/sWAVE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shah-in-boots/sWAVE/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/shah-in-boots/sWAVE/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/shah-in-boots/sWAVE/actions/workflows/pkgdown.yaml)
+[![test-coverage](https://github.com/shah-in-boots/sWAVE/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/shah-in-boots/sWAVE/actions/workflows/test-coverage.yaml)
+[![Github commit frequency](https://img.shields.io/github/commit-activity/w/shah-in-boots/EGM)](https://github.com/shah-in-boots/EGM/graphs/commit-activity) 
+<!-- badges: end -->
+
+The goal of sWAVE is to ...
+
+## Installation
+
+You can install the development version of sWAVE from [GitHub](https://github.com/) with:
+
+```{r, eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("shah-in-boots/sWAVE")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example, eval=FALSE}
+library(sWAVE)
+## basic example code
+```
+
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r cars}
+summary(cars)
+```
+
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
