@@ -2,5 +2,8 @@ pandoc: 3.1.11
 pkgdown: 2.0.9
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-05-26T18:45Z
+last_built: 2024-05-26T20:45Z
+urls:
+  reference: https://shah-in-boots.github.io/sWAVE/reference
+  article: https://shah-in-boots.github.io/sWAVE/articles
 
