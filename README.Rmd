@@ -21,7 +21,8 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/shah-in-boots/sWAVE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shah-in-boots/sWAVE/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/shah-in-boots/sWAVE/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/shah-in-boots/sWAVE/actions/workflows/pkgdown.yaml)
 [![test-coverage](https://github.com/shah-in-boots/sWAVE/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/shah-in-boots/sWAVE/actions/workflows/test-coverage.yaml)
-[![Github commit frequency](https://img.shields.io/github/commit-activity/w/shah-in-boots/EGM)](https://github.com/shah-in-boots/EGM/graphs/commit-activity) 
+[![Github commit frequency](https://img.shields.io/github/commit-activity/w/shah-in-boots/sWAVE)](https://github.com/shah-in-boots/sWAVE/graphs/commit-activity) 
+[![Codecov test coverage](https://codecov.io/gh/shah-in-boots/sWAVE/branch/main/graph/badge.svg)](https://app.codecov.io/gh/shah-in-boots/sWAVE?branch=main)
 <!-- badges: end -->
 
 The goal of sWAVE is to ...
