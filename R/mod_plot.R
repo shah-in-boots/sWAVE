@@ -17,14 +17,20 @@ mod_plot_ui <- function(id){
 #' plot Server Functions
 #'
 #' @noRd
-mod_plot_server <- function(id, dat) {
+mod_plot_server <- function(id, dat, selected_channels) {
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
     output$plot <- renderPlot({
-      req(dat())
-      EGM::ggm(dat()) +
+      req(dat(), selected_channels())
+      g <-
+        EGM::ggm(dat()) +
         EGM::theme_egm_dark()
+
+      g$data <- g$data[g$data$label %in% selected_channels(),]
+
+      # Return plot
+      g
     })
 
   })
