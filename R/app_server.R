@@ -2,19 +2,14 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
-#' @import shiny
-#' @import shinipsum
 #' @import DT
+#' @import EGM
 #' @noRd
 app_server <- function(input, output, session) {
   # Your application server logic
-  output$data_table <- DT::renderDT({
-    random_DT(5, 5)
-  })
-  output$plot <- renderPlot({
-    random_ggplot()
-  })
-  output$text <- renderText({
-    random_text(nwords = 50)
-  })
+  dat <- mod_file_upload_server("file_upload")
+  mod_data_summary_server("data_summary", dat)
+  mod_plot_server("plot", dat)
+
+
 }

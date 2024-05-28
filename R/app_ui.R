@@ -3,7 +3,6 @@
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
-#' @import DT
 #' @noRd
 app_ui <- function(request) {
   tagList(
@@ -11,13 +10,16 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      h1("sWAVE"),
-      h2("A Random DT"),
-      DTOutput("data_table"),
-      h2("A Random Plot"),
-      plotOutput("plot"),
-      h2("A Random Text"),
-      tableOutput("text")
+      titlePanel("sWAVE: Shiny Waveform Annotator, Visualizer, and Editor"),
+      sidebarLayout(
+        sidebarPanel(
+          mod_file_upload_ui("file_upload"),
+          mod_data_summary_ui("data_summary"),
+        ),
+        mainPanel(
+          mod_plot_ui("plot")
+        )
+      )
     )
   )
 }
