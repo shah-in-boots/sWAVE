@@ -3,6 +3,7 @@
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import DT
 #' @noRd
 app_ui <- function(request) {
   tagList(
@@ -10,7 +11,13 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      h1("sWAVE")
+      h1("sWAVE"),
+      h2("A Random DT"),
+      DTOutput("data_table"),
+      h2("A Random Plot"),
+      plotOutput("plot"),
+      h2("A Random Text"),
+      tableOutput("text")
     )
   )
 }
