@@ -14,11 +14,11 @@ app_ui <- function(request) {
       sidebarLayout(
         sidebarPanel(
           mod_file_upload_ui("file_upload"),
-          #mod_data_summary_ui("data_summary"),
-          mod_channel_select_ui("channel_select") # Add channel select module
+          mod_channel_select_ui("channel_select"), # Add channel select module
         ),
         mainPanel(
-          mod_plot_ui("plot")
+          mod_plot_ui("plot"),
+          mod_annotate_plot_ui("annotation") # Add annotation module below
         )
       )
     )

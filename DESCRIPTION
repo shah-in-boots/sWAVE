@@ -11,8 +11,9 @@ License: GPL (>= 3)
 Depends: 
     R (>= 4.1.0),
     shiny (>= 1.8.1.1),
-    EGM (>= 0.1.0),
+    plotly (>= 4.1.0),
     ggplot2 (>= 3.5.0),
+    EGM (>= 0.1.0),
 Imports: 
     golem (>= 0.4.1),
     attempt,
