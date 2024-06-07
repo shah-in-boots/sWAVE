@@ -18,7 +18,7 @@ mod_annotate_plot_ui <- function(id) {
 #' annotate_plot Server Functions
 #'
 #' @noRd
-mod_annotate_plot_server <- function(id, selected_channels, plotly_source) {
+mod_annotate_plot_server <- function(id, selected_channels, plotly_source, annotation_settings) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 

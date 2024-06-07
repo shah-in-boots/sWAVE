@@ -10,6 +10,7 @@
 mod_channel_select_ui <- function(id){
   ns <- NS(id)
   tagList(
+    # Reactive visual output
     uiOutput(ns("channel_select"))
   )
 }
@@ -21,11 +22,13 @@ mod_channel_select_server <- function(id, dat){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    # Options for channels
     channels <- reactive({
       req(dat())
       names(dat()$signal[-1])
     })
 
+    # Let user pick which ones
     output$channel_select <- renderUI({
       req(channels())
       checkboxGroupInput(
@@ -36,6 +39,7 @@ mod_channel_select_server <- function(id, dat){
       )
     })
 
+    # Selected channels
     reactive({
       req(input$selected_channels)
       input$selected_channels

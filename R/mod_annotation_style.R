@@ -11,51 +11,33 @@ mod_annotation_style_ui <- function(id){
   ns <- NS(id)
   tagList(
     # Allows them to pick an annotation style once data is loaded
-    uiOutput(ns("annotation_style_ui")),
-
-    # Allows them to see choices based on the style
-    uiOutput(ns("annotation_choice_ui"))
-
+    selectInput(
+      ns("annotation_style"),
+      label = "Select Annotation Style",
+      choices = c("intracardiac"),
+      selected = "intracardiac"
+    ),
+    conditionalPanel(
+      condition = sprintf("input['%s'] == 'intracardiac'", ns("annotation_style")),
+      radioButtons(
+        ns("annotation_choice"),
+        label = "Select Annotation",
+        choices = c("A (atrial)", "H (His)", "V (ventricular)"),
+        selected = "A (atrial)"
+      )
+    )
   )
 }
 
 #' annotation_style Server Functions
 #'
 #' @noRd
-mod_annotation_style_server <- function(id, dat){
+mod_annotation_style_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     # This annotation style will eventually need to be overhauled
     # An entire annotation system should likely exist within the `EGM` package
-
-    # First let's add the annotation input box to only render once data is in
-    output$annotation_style_ui <- renderUI({
-      req(dat())
-      tagList(
-        selectInput(
-          ns("annotation_style"),
-          label = "Select Annotation Style",
-          choices = c("intracardiac"),
-          selected = "intracardiac"
-        )
-      )
-    })
-
-
-    # Second can see annotation options once picked
-    output$annotation_choice_ui <- renderUI({
-      req(dat())
-      req(input$annotation_style)
-      if (input$annotation_style == "intracardiac") {
-        radioButtons(
-          ns("annotation_choice"),
-          label = "Select Annotation",
-          choices = c("A (atrial)", "H (His)", "V (ventricular)"),
-          selected = "A (atrial)"
-        )
-      }
-    })
 
     # Return reactive values
     return(
