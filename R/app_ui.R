@@ -14,11 +14,12 @@ app_ui <- function(request) {
       sidebarLayout(
         sidebarPanel(
           mod_file_upload_ui("file_upload"),
+          mod_annotation_style_ui("annotation_style"),
           mod_channel_select_ui("channel_select"), # Add channel select module
         ),
         mainPanel(
           mod_plot_ui("plot"),
-          mod_annotate_plot_ui("annotation") # Add annotation module below
+          uiOutput("delayed_annotation") # Annotation only after data uploaded
         )
       )
     )

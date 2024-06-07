@@ -33,7 +33,6 @@ mod_plot_server <- function(id, dat, selected_channels, plotly_source) {
       plotData <- ggm(dat())$data
       channelNames <- selected_channels()
 
-
       # Simplify dataset and create simple ggplot
       # This is a data.table operation
       # Color is set to white to match the dark theme

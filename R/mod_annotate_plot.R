@@ -10,7 +10,7 @@
 mod_annotate_plot_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    actionButton(ns("annotation_button"), "Enable Annotation"),
+    actionButton(ns("annotation_button"), "Annotation Mode"),
     DT::DTOutput(ns("annotation_table"))
   )
 }
@@ -36,42 +36,33 @@ mod_annotate_plot_server <- function(id, selected_channels, plotly_source) {
 
       clickData <- plotly::event_data("plotly_click", source = plotly_source)
 
-      # Check to see if click_data is correct
-      print("Click data:")
-      print(clickData)
-
       # Get ordered channels
       orderedLabels <- EGM:::.labels
       channelNames <- selected_channels()
       orderedChannels <- channelNames[match(orderedLabels, channelNames, nomatch = 0)]
 
-      print("Ordered channels: ")
-      print(orderedChannels)
-
+      # Map curve number to the channel name
       curveNumber <- clickData$curveNumber + 1
-
       if (curveNumber <= length(orderedChannels)) {
         selectedChannel <- orderedChannels[curveNumber]
       } else {
         selectedChannel <- "Unknown"
       }
 
-      print("Channel: ")
-      print(selectedChannel)
+      # Add annotation choice to annotation table
+      annotationChoice <- annotation_settings$annotation_choice()
 
-      newAnnotation <- data.frame(Channel = selectedChannel,
-                                  Time = clickData$x)
-
-      print("New annotation:")
-      print(newAnnotation)
+      # TODO
+      # Eventually this need to be compatabile with `annotation_table()`
+      newAnnotation <-
+        data.frame(Channel = selectedChannel,
+                   Time = clickData$x,
+                   Type = annotationChoice)
 
       # Update annotations
       currentAnnotations <- annotations()
       updatedAnnotations <- rbind(currentAnnotations, newAnnotation)
       annotations(updatedAnnotations)
-
-      print("Annotations reactive value after update:")  # Debug print
-      print(annotations())  # Debug print to verify update
     })
 
     output$annotation_table <- DT::renderDT({
