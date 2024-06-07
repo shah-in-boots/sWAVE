@@ -10,7 +10,29 @@
 mod_annotate_plot_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    actionButton(ns("annotation_button"), "Annotation Mode"),
+    # Add color to the active annotation button
+    tags$head(
+      tags$style(HTML("
+        .annotation-active {
+          background-color: #fd9a44 !important;
+          color: #FFFFFF !important;
+          border: none
+        }
+        .delete-button {
+          background-color: #d11807 !important;
+          color: #FFFFFF !important;
+          border: none
+        }
+      "))
+    ),
+    actionButton(ns("annotation_button"),
+      label = "Annotation Mode",
+      class = "annotation-button"
+    ),
+    actionButton(ns("delete_button"),
+      label = "Delete Annotation",
+      class = "delete-button"
+    ),
     DT::DTOutput(ns("annotation_table"))
   )
 }
@@ -23,13 +45,24 @@ mod_annotate_plot_server <- function(id, selected_channels, plotly_source, annot
     ns <- session$ns
 
     annotation_mode <- reactiveVal(FALSE)
-    annotations <- reactiveVal(data.frame(Channel = character(), Time = numeric()))
+    annotations <- reactiveVal(
+      data.frame(
+        Channel = character(),
+        Time = numeric(),
+        Type = character()
+      )
+    )
 
     # Switch annotation mode to TRUE if clicked
     observeEvent(input$annotation_button, {
       annotation_mode(!annotation_mode())
+      shinyjs::toggleClass(
+        selector = paste0("#", ns("annotation_button")),
+        class = "annotation-active"
+      )
     })
 
+    # Add annotations based on clicking on the plot
     observeEvent(plotly::event_data("plotly_click", source = plotly_source), {
       req(annotation_mode())
       req(selected_channels())
@@ -55,9 +88,11 @@ mod_annotate_plot_server <- function(id, selected_channels, plotly_source, annot
       # TODO
       # Eventually this need to be compatabile with `annotation_table()`
       newAnnotation <-
-        data.frame(Channel = selectedChannel,
-                   Time = clickData$x,
-                   Type = annotationChoice)
+        data.frame(
+          Channel = selectedChannel,
+          Time = clickData$x,
+          Type = annotationChoice
+        )
 
       # Update annotations
       currentAnnotations <- annotations()
@@ -65,10 +100,24 @@ mod_annotate_plot_server <- function(id, selected_channels, plotly_source, annot
       annotations(updatedAnnotations)
     })
 
-    output$annotation_table <- DT::renderDT({
-      DT::datatable(annotations(), selection = "single", editable = TRUE)
+    # Delete annotations based on selections
+    # DT::datatable and DT::renderDT() create a variable for input
+    #   That is the name of the table with "_rows_selected" appended
+    observeEvent(input$delete_button, {
+      rowSelection <- input$annotation_table_rows_selected
+      if (!is.null(rowSelection) & length(rowSelection) > 0) {
+        currentAnnotations <- annotations()
+        updatedAnnotations <- currentAnnotations[-rowSelection, ]
+        annotations(updatedAnnotations)
+      }
     })
 
+    output$annotation_table <- DT::renderDT(
+      {
+        DT::datatable(annotations(), selection = "single", editable = TRUE)
+      },
+      server = FALSE
+    )
   })
 }
 

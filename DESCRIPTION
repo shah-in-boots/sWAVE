@@ -11,16 +11,17 @@ License: GPL (>= 3)
 Depends: 
     R (>= 4.1.0),
     shiny (>= 1.8.1.1),
-    plotly (>= 4.1.0),
-    ggplot2 (>= 3.5.0),
-    EGM (>= 0.1.0),
 Imports: 
     golem (>= 0.4.1),
-    attempt,
     config (>= 0.3.2),
+    attempt,
     DT,
     glue,
     htmltools,
+    shinyjs,
+    plotly,
+    EGM,
+    ggplot2,
 Suggests: 
     shinipsum,
     spelling,

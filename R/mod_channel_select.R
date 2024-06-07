@@ -45,6 +45,8 @@ mod_channel_select_server <- function(id, dat){
       input$selected_channels
     })
   })
+
+
 }
 
 ## To be copied in the UI

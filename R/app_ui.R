@@ -6,6 +6,7 @@
 #' @noRd
 app_ui <- function(request) {
   tagList(
+    # Enable
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
@@ -47,8 +48,10 @@ golem_add_external_resources <- function() {
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "sWAVE"
-    )
+    ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
+    # Add shiny JS here
+    shinyjs::useShinyjs()
   )
 }
