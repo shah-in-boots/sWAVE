@@ -15,7 +15,6 @@ Imports:
     golem (>= 0.4.1),
     config (>= 0.3.2),
     attempt,
-    DT,
     glue,
     htmltools,
     shinyjs,

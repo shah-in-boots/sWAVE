@@ -2,28 +2,39 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
-#' @import DT
 #' @import EGM
 #' @noRd
 app_server <- function(input, output, session) {
   # Application server logic
 
   # File upload tracker
-  dat <- mod_file_upload_server("file_upload")
+  egm <- mod_file_upload_server("file_upload")
 
-  # Channel selection
-  selected_channels <- mod_channel_select_server("channel_select", dat)
+  observeEvent(input$prev_sweep, {
+    current <- input$sweep_index
+    if (is.null(current) || is.na(current)) {
+      current <- 1
+    }
+    updateNumericInput(session, "sweep_index", value = max(1, current - 1))
+  })
 
-  # Annotation style options
-  annotation_settings <- mod_annotation_style_server("annotation_style")
+  observeEvent(input$next_sweep, {
+    current <- input$sweep_index
+    if (is.null(current) || is.na(current)) {
+      current <- 1
+    }
+    updateNumericInput(session, "sweep_index", value = current + 1)
+  })
 
-  # Plotting
-  plotly_source <- "plot_annotation" # Define a source ID for plotly
-  mod_plot_server("plot", dat, selected_channels, plotly_source)
-  mod_annotate_plot_server("annotation",
-                           selected_channels,
-                           plotly_source,
-                           annotation_settings)
+  viewer_controls <- reactive({
+    list(
+      sweep_index = input$sweep_index,
+      window_start = input$window_start,
+      window_duration = input$window_duration
+    )
+  })
+
+  mod_waveform_viewer_server("waveform_viewer", egm = egm, controls = viewer_controls)
 
 
 }
