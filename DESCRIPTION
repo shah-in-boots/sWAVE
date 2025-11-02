@@ -11,16 +11,13 @@ License: GPL (>= 3)
 Depends: 
     R (>= 4.1.0),
     shiny (>= 1.8.1.1),
-Imports: 
+Imports:
     golem (>= 0.4.1),
     config (>= 0.3.2),
-    attempt,
-    glue,
-    htmltools,
     shinyjs,
     plotly,
     EGM,
-    ggplot2,
+    data.table
 Suggests: 
     shinipsum,
     spelling,
