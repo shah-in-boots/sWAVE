@@ -35,7 +35,7 @@ app_server <- function(input, output, session) {
     )
   })
 
-  mod_waveform_viewer_server("waveform_viewer", egm = egm, controls = viewer_controls)
+  mod_wave_viewer_server("wave_viewer", egm = egm, controls = viewer_controls)
 
 
 }
