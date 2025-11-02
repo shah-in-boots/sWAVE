@@ -29,7 +29,7 @@ app_ui <- function(request) {
           numericInput("window_duration", "Window duration (samples)", value = 2000, min = 1, step = 1)
         ),
         mainPanel(
-          mod_waveform_viewer_ui("waveform_viewer")
+          mod_wave_viewer_ui("wave_viewer")
         )
       )
     )
