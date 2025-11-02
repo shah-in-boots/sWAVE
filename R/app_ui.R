@@ -14,7 +14,7 @@ app_ui <- function(request) {
       titlePanel("sWAVE: Shiny Waveform Annotator, Visualizer, and Editor"),
       sidebarLayout(
         sidebarPanel(
-          mod_file_upload_ui("file_upload"),
+          mod_egm_source_ui("egm_source"),
           tags$hr(),
           tags$h4("Sweep Navigation"),
           numericInput("sweep_index", "Sweep index", value = 1, min = 1, step = 1),

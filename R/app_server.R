@@ -7,8 +7,9 @@
 app_server <- function(input, output, session) {
   # Application server logic
 
-  # File upload tracker
-  egm <- mod_file_upload_server("file_upload")
+  initial_egm <- golem::get_golem_options("initial_egm")
+  egm_source <- mod_egm_source_server("egm_source", initial_egm = initial_egm)
+  egm <- egm_source$egm
 
   observeEvent(input$prev_sweep, {
     current <- input$sweep_index
