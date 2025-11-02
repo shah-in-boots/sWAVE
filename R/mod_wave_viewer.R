@@ -12,23 +12,29 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList div fluidRow column h4
+#' @importFrom shinyjs runjs
 mod_wave_viewer_ui <- function(id) {
   ns <- NS(id)
   shiny::tagList(
     shiny::div(
-      class = "waveform-viewer__controls",
-      shiny::fluidRow(
-        shiny::column(
-          width = 12,
-          shiny::h4("Channel Selection"),
-          mod_channel_select_ui(ns("channel_select"))
+      id = ns("interaction_root"),
+      class = "waveform-viewer d-flex flex-column gap-3 h-100",
+      tabindex = "0",
+      shiny::div(
+        class = "waveform-viewer__controls",
+        shiny::fluidRow(
+          shiny::column(
+            width = 12,
+            shiny::h4("Channel Selection"),
+            mod_channel_select_ui(ns("channel_select"))
+          )
         )
+      ),
+      shiny::div(
+        class = "waveform-viewer__plot flex-grow-1",
+        style = "width: 100%; height: 100%; min-height: 500px;",
+        plotly::plotlyOutput(ns("plot"), width = "100%", height = "100%")
       )
-    ),
-    shiny::div(
-      class = "waveform-viewer__plot flex-grow-1",
-      style = "width: 100%; height: 100%; min-height: 500px;",
-      plotly::plotlyOutput(ns("plot"), width = "100%", height = "100%")
     )
   )
 }
@@ -39,6 +45,16 @@ mod_wave_viewer_ui <- function(id) {
 mod_wave_viewer_server <- function(id, egm, controls) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+
+    session$onFlushed(function() {
+      bind_script <- sprintf(
+        "(function(){\n  var ns = '%s';\n  var rootId = '%s';\n  window.waveViewerBindings = window.waveViewerBindings || {};\n  if (window.waveViewerBindings[rootId]) { return; }\n  var root = document.getElementById(rootId);\n  if (!root) { return; }\n  root.setAttribute('tabindex', '0');\n  var sendNudge = function(direction, evt) {\n    if (typeof Shiny === 'undefined' || !Shiny.setInputValue) { return; }\n    Shiny.setInputValue(ns + 'window_nudge', {\n      direction: direction,\n      shift: !!(evt && evt.shiftKey),\n      alt: !!(evt && evt.altKey),\n      ctrl: !!(evt && evt.ctrlKey),\n      nonce: Date.now()\n    }, {priority: 'event'});\n  };\n  root.addEventListener('wheel', function(evt) {\n    if (evt.ctrlKey) { return; }\n    evt.preventDefault();\n    sendNudge(evt.deltaY < 0 ? 'back' : 'forward', evt);\n  }, {passive: false});\n  root.addEventListener('keydown', function(evt) {\n    if (evt.key === 'ArrowLeft' || evt.key === 'ArrowRight') {\n      evt.preventDefault();\n      sendNudge(evt.key === 'ArrowLeft' ? 'back' : 'forward', evt);\n    } else if (evt.key === ' ' || evt.code === 'Space') {\n      evt.preventDefault();\n      if (typeof Shiny !== 'undefined' && Shiny.setInputValue) {\n        Shiny.setInputValue(ns + 'toggle_play', {nonce: Date.now()}, {priority: 'event'});\n      }\n    }\n  });\n  root.addEventListener('focus', function() {\n    root.classList.add('waveform-viewer--focused');\n  });\n  root.addEventListener('blur', function() {\n    root.classList.remove('waveform-viewer--focused');\n  });\n  setTimeout(function(){ root.focus(); }, 200);\n  window.waveViewerBindings[rootId] = true;\n})();",
+        session$ns(""),
+        ns("interaction_root")
+      )
+
+      shinyjs::runjs(bind_script)
+    }, once = TRUE)
 
     selected_channels <- mod_channel_select_server("channel_select", egm)
 
@@ -130,11 +146,11 @@ mod_wave_viewer_server <- function(id, egm, controls) {
       }
       sweep_id <- sweeps[[sweep_index]]
 
-      window_start <- suppressWarnings(as.numeric(ctrl$window_start %||% 0))
+      window_start <- suppressWarnings(as.numeric(ctrl$start_time %||% ctrl$window_start %||% 0))
       if (is.na(window_start)) {
         window_start <- 0
       }
-      window_duration <- suppressWarnings(as.numeric(ctrl$window_duration %||% Inf))
+      window_duration <- suppressWarnings(as.numeric(ctrl$window_length %||% ctrl$window_duration %||% Inf))
       if (is.na(window_duration) || window_duration <= 0) {
         window_duration <- Inf
       }

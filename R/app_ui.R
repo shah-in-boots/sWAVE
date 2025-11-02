@@ -24,9 +24,37 @@ app_ui <- function(request) {
             actionButton("next_sweep", "Next")
           ),
           tags$hr(),
-          tags$h4("Window"),
-          numericInput("window_start", "Window start (sample)", value = 0, min = 0, step = 1),
-          numericInput("window_duration", "Window duration (samples)", value = 2000, min = 1, step = 1)
+          tags$h4("Viewer Window"),
+          sliderInput(
+            "start_time",
+            "Jump to sample",
+            min = 0,
+            max = 10000,
+            value = 0,
+            step = 1
+          ),
+          sliderInput(
+            "window_length",
+            "Window width (samples)",
+            min = 1,
+            max = 10000,
+            value = 2000,
+            step = 10
+          ),
+          sliderInput(
+            "sweep_speed",
+            "Sweep speed (samples/sec)",
+            min = 1,
+            max = 5000,
+            value = 1000,
+            step = 1
+          ),
+          shiny::div(
+            class = "d-flex gap-2 align-items-center",
+            actionButton("play_window", "Play"),
+            actionButton("pause_window", "Pause"),
+            checkboxInput("loop_window", "Loop", value = TRUE)
+          )
         ),
         mainPanel(
           mod_wave_viewer_ui("wave_viewer")
