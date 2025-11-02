@@ -40,7 +40,7 @@ expression in order for the match to be considered successful.}
 See \code{?golem::get_golem_options} for more details.}
 }
 \value{
-The return value of \code{\link[=run_app]{run_app()}}.
+The value returned by \code{\link[=run_app]{run_app()}}.
 }
 \description{
 Launch the waveform viewer with a preloaded EGM object

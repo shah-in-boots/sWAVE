@@ -97,38 +97,35 @@ egm_available_readers <- function() {
       accept = ".xml",
       reader = EGM::read_muse
     ),
-    lspro = list(
-      id = "lspro",
-      label = "LS Pro (.txt)",
-      file_label = "Upload LS Pro File",
+    prucka = list(
+      id = "prucka",
+      label = "Prucka/CardioLab (.txt)",
+      file_label = "Upload Prucka/CardioLab File",
       accept = ".txt",
-      reader = EGM::read_lspro
+      reader = EGM::read_prucka
+    ),
+    bard = list(
+      id = "bard",
+      label = "Bard (.txt)",
+      file_label = "Upload Bard File",
+      accept = ".txt",
+      reader = EGM::read_bard
+    ),
+    wfdb = list(
+      id = "wfdb",
+      label = "WFDB (.hea/.dat)",
+      file_label = "Upload WFDB Files",
+      accept = c(".hea", ".dat"),
+      reader = EGM::read_wfdb
     )
   )
-
-  exported <- getNamespaceExports("EGM")
-  read_funs <- grep("^read_", exported, value = TRUE)
-  known <- c("read_muse", "read_lspro")
-  extra <- setdiff(read_funs, known)
-
-  for (fun_name in extra) {
-    reader_fun <- getFromNamespace(fun_name, "EGM")
-    label <- format_reader_label(fun_name)
-    readers[[fun_name]] <- list(
-      id = fun_name,
-      label = label,
-      file_label = paste0("Upload ", label, " File"),
-      accept = NULL,
-      reader = reader_fun
-    )
-  }
 
   readers
 }
 
 format_reader_label <- function(fun_name) {
   label <- gsub("^read_", "", fun_name)
-  parts <- strsplit(label, "[_\-]")[[1]]
+  parts <- strsplit(label, "[-_]")[[1]]
   parts <- paste0(toupper(substring(parts, 1, 1)), substring(parts, 2))
   paste(parts, collapse = " ")
 }
