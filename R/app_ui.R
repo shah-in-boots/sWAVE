@@ -15,14 +15,21 @@ app_ui <- function(request) {
       sidebarLayout(
         sidebarPanel(
           mod_file_upload_ui("file_upload"),
-          # Show annotation styles
-          mod_annotation_style_ui("annotation_style"),
-          # Select channels
-          mod_channel_select_ui("channel_select"),
+          tags$hr(),
+          tags$h4("Sweep Navigation"),
+          numericInput("sweep_index", "Sweep index", value = 1, min = 1, step = 1),
+          shiny::div(
+            class = "d-flex gap-2",
+            actionButton("prev_sweep", "Previous"),
+            actionButton("next_sweep", "Next")
+          ),
+          tags$hr(),
+          tags$h4("Window"),
+          numericInput("window_start", "Window start (sample)", value = 0, min = 0, step = 1),
+          numericInput("window_duration", "Window duration (samples)", value = 2000, min = 1, step = 1)
         ),
         mainPanel(
-          mod_plot_ui("plot"),
-          mod_annotate_plot_ui("annotation"), # Annotation only after data uploaded
+          mod_waveform_viewer_ui("waveform_viewer")
         )
       )
     )
