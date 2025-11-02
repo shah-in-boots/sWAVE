@@ -1,24 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/404.html</loc>
-  </url>
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shah-in-boots.github.io/sWAVE/reference/run_app.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://shah-in-boots.github.io/sWAVE/404.html</loc></url>
+<url><loc>https://shah-in-boots.github.io/sWAVE/LICENSE.html</loc></url>
+<url><loc>https://shah-in-boots.github.io/sWAVE/authors.html</loc></url>
+<url><loc>https://shah-in-boots.github.io/sWAVE/index.html</loc></url>
+<url><loc>https://shah-in-boots.github.io/sWAVE/news/index.html</loc></url>
+<url><loc>https://shah-in-boots.github.io/sWAVE/reference/index.html</loc></url>
+<url><loc>https://shah-in-boots.github.io/sWAVE/reference/run_app.html</loc></url>
 </urlset>
+
