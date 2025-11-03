@@ -26,27 +26,3 @@ run_app <- function(
     golem_opts = list(...)
   )
 }
-
-#' Launch the waveform viewer with a preloaded EGM object
-#'
-#' @param egm An EGM object that should be loaded when the application starts.
-#' @inheritParams run_app
-#' @return The value returned by [run_app()].
-#' @export
-launch_viewer <- function(
-  egm,
-  onStart = NULL,
-  options = list(),
-  enableBookmarking = NULL,
-  uiPattern = "/",
-  ...
-) {
-  run_app(
-    onStart = onStart,
-    options = options,
-    enableBookmarking = enableBookmarking,
-    uiPattern = uiPattern,
-    initial_egm = egm,
-    ...
-  )
-}
