@@ -13,5 +13,12 @@ app_server <- function(input, output, session) {
   # Wire uploaded EGM into plot module
   mod_egm_plot_server("plot", egm = uploaded$egm)
   
+  # Conditional placeholder text - only show when no file is loaded
+  output$placeholder_text <- renderUI({
+    if (is.null(uploaded$egm())) {
+      p("Read in file to begin...")
+    }
+  })
+  
   # Future modules can use the uploaded_data reactive here
 }

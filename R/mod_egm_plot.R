@@ -11,6 +11,7 @@
 #' @importFrom dplyr mutate select group_by ungroup slice any_of n row_number rename
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang .data
+#' @importFrom RColorBrewer brewer.pal
 #'
 #' @examples
 #' # In app_server: mod_egm_plot_server("plot", egm = uploaded$egm)
@@ -41,7 +42,7 @@ mod_egm_plot_ui <- function(id) {
     stop("EGM signal table is empty or NULL")
   }
 
-  # Get channel names from header$label (these match signal column names)
+  # Get channel names from header$label in order (these match signal column names)
   channel_labels <- as.character(egm$header$label)
   
   # Signal is wide: sample + channel columns
@@ -53,12 +54,30 @@ mod_egm_plot_ui <- function(id) {
     values_to = "value"
   )
   
+  # Convert label to factor to preserve order from header
+  sig_long <- dplyr::mutate(sig_long, label = factor(.data$label, levels = channel_labels))
+  
   # Calculate time from sample and frequency
   fs <- .pick_fs(egm)
   sig_long <- dplyr::mutate(sig_long, time = .data$sample / fs)
   
-  # Return time, value, label (and optionally sample)
-  dplyr::select(sig_long, time, value, label, sample)
+  # Normalize each channel and add vertical offset
+  # Each channel gets its own vertical space
+  sig_long <- sig_long %>%
+    dplyr::group_by(.data$label) %>%
+    dplyr::mutate(
+      # Normalize to roughly -0.4 to +0.4 range per channel
+      value_norm = (.data$value - mean(.data$value, na.rm = TRUE)) / 
+                   (max(abs(.data$value - mean(.data$value, na.rm = TRUE)), na.rm = TRUE) + 1e-10),
+      value_norm = .data$value_norm * 0.4,
+      # Add vertical offset: channel number (1-indexed from bottom)
+      channel_num = as.numeric(.data$label),
+      value_offset = .data$value_norm + .data$channel_num
+    ) %>%
+    dplyr::ungroup()
+  
+  # Return time, value_offset, label (and original value for hover)
+  dplyr::select(sig_long, time, value_offset, label, value, sample, channel_num)
 }
 
 .downsample_by <- function(sig, target_n = 2e5) {
@@ -85,26 +104,58 @@ mod_egm_plot_server <- function(id, egm) {
     output$plot <- plotly::renderPlotly({
       s <- sig_ds()
       shiny::req(s)
+      
+      # Get unique channels in order
+      channels <- levels(s$label)
+      n_channels <- length(channels)
+      
+      # Use white color for all traces for better legibility on black background
+      colors <- rep("white", n_channels)
+      
       plotly::plot_ly(
         s,
         x = ~time,
-        y = ~value,
+        y = ~value_offset,
         color = ~label,
+        colors = colors,
         split = ~label,
         type = "scattergl",
         mode = "lines",
+        line = list(color = "white", width = 1),
         hoverinfo = "text",
         text = ~paste0(
-          "label: ", label,
-          "<br>time: ", signif(time, 6),
-          "<br>value: ", signif(value, 6)
+          "Channel: ", label,
+          "<br>Time: ", signif(time, 6), " s",
+          "<br>Value: ", signif(value, 6)
         )
       ) %>%
         plotly::layout(
-          xaxis = list(title = if (inherits(s$time, "POSIXt")) "Time" else "Time (s)"),
-          yaxis = list(title = "Value"),
-          legend = list(orientation = "h", x = 0, y = 1.05),
-          hovermode = "x unified"
+          plot_bgcolor = "black",
+          paper_bgcolor = "black",
+          font = list(color = "white"),
+          xaxis = list(
+            title = if (inherits(s$time, "POSIXt")) "Time" else "Time (s)",
+            gridcolor = "#333333",
+            zerolinecolor = "#555555"
+          ),
+          yaxis = list(
+            title = "",
+            tickmode = "array",
+            tickvals = seq_len(n_channels),
+            ticktext = channels,
+            range = c(0.5, n_channels + 0.5),
+            gridcolor = "#333333",
+            zerolinecolor = "#555555"
+          ),
+          legend = list(
+            orientation = "h", 
+            x = 0, 
+            y = 1.05,
+            font = list(color = "white"),
+            bgcolor = "rgba(0,0,0,0.5)"
+          ),
+          hovermode = "x unified",
+          showlegend = TRUE
         )
     })
   })

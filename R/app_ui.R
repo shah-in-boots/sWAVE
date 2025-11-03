@@ -24,7 +24,7 @@ app_ui <- function(request) {
         mainPanel(
           width = 9,
           h3("Waveform Viewer"),
-          p("Upload a file to begin..."),
+          uiOutput("placeholder_text"),
           mod_egm_plot_ui("plot")
         )
       )

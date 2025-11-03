@@ -20,7 +20,9 @@ Imports:
     data.table,
     dplyr,
     tidyr,
-    rlang
+    rlang,
+    shinyFiles,
+    fs
 Suggests: 
     shinipsum,
     spelling,
