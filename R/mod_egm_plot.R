@@ -6,7 +6,8 @@
 #' @param id Module id
 #' @param egm Reactive returning an EGM object
 #' @return None; used for side effects in Shiny
-#' @importFrom shiny NS moduleServer reactive req renderUI uiOutput
+#' @importFrom shiny NS moduleServer reactive reactiveVal req renderUI uiOutput
+#' @importFrom shiny selectInput actionButton observeEvent
 #' @importFrom plotly plot_ly layout renderPlotly plotlyOutput
 #' @importFrom dplyr mutate select group_by ungroup slice any_of n row_number rename
 #' @importFrom tidyr pivot_longer
@@ -22,6 +23,17 @@ NULL
 mod_egm_plot_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::div(
+      class = "d-flex gap-2 align-items-center mb-2 flex-wrap",
+      shiny::selectInput(
+        ns("speed"),
+        label = "Sweep speed",
+        choices = c("25 mm/s" = 25, "50 mm/s" = 50, "100 mm/s" = 100, "200 mm/s" = 200),
+        selected = 25
+      ),
+      shiny::actionButton(ns("prev_window"), label = "Previous"),
+      shiny::actionButton(ns("next_window"), label = "Next")
+    ),
     plotly::plotlyOutput(ns("plot"), height = "60vh")
   )
 }
@@ -94,17 +106,107 @@ mod_egm_plot_server <- function(id, egm) {
   shiny::moduleServer(id, function(input, output, session) {
     shiny::req(egm)
 
-    sig_ds <- shiny::reactive({
+    default_speed <- 25
+    default_duration <- 10
+
+    selected_speed <- shiny::reactive({
+      req_speed <- input$speed
+      if (is.null(req_speed)) {
+        return(default_speed)
+      }
+      as.numeric(req_speed)
+    })
+
+    window_duration <- shiny::reactive({
+      sel <- selected_speed()
+      default_duration * (default_speed / sel)
+    })
+
+    sig_full <- shiny::reactive({
       x <- egm()
       shiny::req(x)
-      s <- .prepare_signal(x)
-      .downsample_by(s)
+      .prepare_signal(x)
+    })
+
+    window_start <- shiny::reactiveVal(0)
+
+    .update_window_start <- function(start_candidate) {
+      s <- sig_full()
+      shiny::req(s)
+      dur <- window_duration()
+      if (!is.finite(dur) || dur <= 0) {
+        dur <- default_duration
+      }
+      max_time <- max(s$time, na.rm = TRUE)
+      max_start <- max(0, max_time - dur)
+      start_adj <- min(max(start_candidate, 0), max_start)
+      window_start(start_adj)
+    }
+
+    shiny::observeEvent(sig_full(), {
+      window_start(0)
+    })
+
+    shiny::observeEvent(window_duration(), {
+      .update_window_start(window_start())
+    })
+
+    shiny::observeEvent(input$next_window, {
+      shiny::req(sig_full())
+      dur <- window_duration()
+      current_start <- window_start()
+      step <- dur * 0.8
+      if (!is.finite(step) || step <= 0) {
+        step <- default_duration * 0.8
+      }
+      .update_window_start(current_start + step)
+    })
+
+    shiny::observeEvent(input$prev_window, {
+      shiny::req(sig_full())
+      dur <- window_duration()
+      current_start <- window_start()
+      step <- dur * 0.8
+      if (!is.finite(step) || step <= 0) {
+        step <- default_duration * 0.8
+      }
+      .update_window_start(current_start - step)
+    })
+
+    sig_window <- shiny::reactive({
+      s <- sig_full()
+      shiny::req(s)
+      dur <- window_duration()
+      if (!is.finite(dur) || dur <= 0) {
+        dur <- default_duration
+      }
+      start <- window_start()
+      max_time <- max(s$time, na.rm = TRUE)
+      max_start <- max(0, max_time - dur)
+      start <- min(max(start, 0), max_start)
+      end <- start + dur
+      filtered <- dplyr::filter(s, .data$time >= start & .data$time <= end)
+      .downsample_by(filtered)
+    })
+
+    window_range <- shiny::reactive({
+      s <- sig_full()
+      shiny::req(s)
+      dur <- window_duration()
+      if (!is.finite(dur) || dur <= 0) {
+        dur <- default_duration
+      }
+      start <- window_start()
+      max_time <- max(s$time, na.rm = TRUE)
+      max_start <- max(0, max_time - dur)
+      start <- min(max(start, 0), max_start)
+      c(start, start + dur)
     })
 
     output$plot <- plotly::renderPlotly({
-      s <- sig_ds()
+      s <- sig_window()
       shiny::req(s)
-      
+
       # Get unique channels in order
       channels <- levels(s$label)
       n_channels <- length(channels)
@@ -136,7 +238,8 @@ mod_egm_plot_server <- function(id, egm) {
           xaxis = list(
             title = if (inherits(s$time, "POSIXt")) "Time" else "Time (s)",
             gridcolor = "#333333",
-            zerolinecolor = "#555555"
+            zerolinecolor = "#555555",
+            range = window_range()
           ),
           yaxis = list(
             title = "",
